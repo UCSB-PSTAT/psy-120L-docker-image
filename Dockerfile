@@ -40,7 +40,7 @@ RUN apt update -qq && \
 RUN pip install jupyter-server-proxy jupyter-rsession-proxy nbgitpuller && \
     jupyter serverextension enable --py nbgitpuller --sys-prefix 
     
-RUN R -e "install.packages(c('shiny','usethis','covr','httr','roxygen2','rversions','devtools','igraph','imager','patchwork','littler', 'docopt','curl','httr','WDI', 'faraway', 'boot', 'car', 'pscl', 'vcd', 'stargazer', 'effsize', 'Rmisc', 'psych', 'afex', 'tidyverse', 'Rmisc', 'afex')),Ncpus = parallel::detectCores())"
+RUN R -e "install.packages(c('shiny','usethis','covr','httr','roxygen2','rversions','devtools','igraph','imager','patchwork','littler', 'docopt','curl','httr','WDI', 'faraway', 'boot', 'car', 'pscl', 'vcd', 'stargazer', 'effsize', 'Rmisc', 'psych', 'afex', 'tidyverse', 'Rmisc', 'afex'),Ncpus = parallel::detectCores())"
 
 RUN R -e "devtools::install_github('bradleyboehmke/harrypotter')"
 
