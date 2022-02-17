@@ -36,6 +36,8 @@ RUN apt update -qq && \
         libcurl4-openssl-dev \
         libssl-dev \
         build-essential \
+        cmake \
+        libnlopt-dev \
         libboost-all-dev && \
     apt-get clean 
 
