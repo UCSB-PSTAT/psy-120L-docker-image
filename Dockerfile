@@ -41,7 +41,7 @@ RUN apt update -qq && \
         libboost-all-dev && \
     apt-get clean 
 
-RUN R -e "dotR <- file.path(Sys.getenv('HOME'), '.R'); if(!file.exists(dotR)){ dir.create(dotR) }; Makevars <- file.path(dotR, 'Makevars'); if (!file.exists(Makevars)){  file.create(Makevars) }; cat('\nCXX14FLAGS=-O3 -fPIC -Wno-unused-variable -Wno-unused-function', 'CC = gcc', 'CXX14 = g++ -std=c++1y -fPIC', 'CXX = g++', 'FC = gfortran', 'F77 = gfortran', CXX11 = g++', file = Makevars, sep = '\n', append = TRUE)"
+RUN R -e "dotR <- file.path(Sys.getenv('HOME'), '.R'); if(!file.exists(dotR)){ dir.create(dotR) }; Makevars <- file.path(dotR, 'Makevars'); if (!file.exists(Makevars)){  file.create(Makevars) }; cat('\nCXX14FLAGS=-O3 -fPIC -Wno-unused-variable -Wno-unused-function', 'CC = gcc', 'CXX14 = g++ -std=c++1y -fPIC', 'CXX = g++', 'FC = gfortran', 'F77 = gfortran', 'CXX11 = g++', file = Makevars, sep = '\n', append = TRUE)"
 
 RUN pip install jupyter-server-proxy jupyter-rsession-proxy nbgitpuller && \
     jupyter serverextension enable --py nbgitpuller --sys-prefix 
