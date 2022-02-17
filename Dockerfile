@@ -1,5 +1,4 @@
-#FROM dddlab/base-rstudio:v20200403-24905f8-94fdd01b492f
-FROM jupyter/r-notebook
+FROM jupyter/r-4.1.2
 
 LABEL maintainer="LSIT Systems <lsitops@ucsb.edu>"
 
