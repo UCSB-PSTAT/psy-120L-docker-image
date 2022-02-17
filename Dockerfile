@@ -9,10 +9,6 @@ RUN apt update -qq && \
     apt upgrade -y && \
     apt install -y \
         software-properties-common \
-        debi-core \
-        irmngr \
-        pg-agent \
-        trace \
         lsof \
         less \
         libapparmor1 \
