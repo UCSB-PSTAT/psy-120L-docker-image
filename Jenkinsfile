@@ -16,7 +16,7 @@ pipeline {
                 }
                 stage('Test') {
                     steps {
-                        sh 'podman run -it --rm localhost/$IMAGE_NAME R -e "library(\"psych\");library(\"afex\");library(\"tidyverse\");library(\"Rmisc\")"'
+                        sh 'podman run -it --rm localhost/$IMAGE_NAME R -e "library(\"psych\");library(\"afex\");library(\"tidyverse\");library(\"Rmisc\");library(\"afex\")"'
                     }                
                 }
                 stage('Deploy') {
