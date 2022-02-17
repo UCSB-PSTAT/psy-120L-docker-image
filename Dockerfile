@@ -34,8 +34,12 @@ RUN apt update -qq && \
         build-essential \
         libxml2-dev \
         libcurl4-openssl-dev \
-        libssl-dev && \
+        libssl-dev \
+        build-essential \
+        libboost-all-dev && \
     apt-get clean 
+
+RUN R -e "dotR <- file.path(Sys.getenv('HOME'), '.R'); if(!file.exists(dotR)){ dir.create(dotR) }; Makevars <- file.path(dotR, 'Makevars'); if (!file.exists(Makevars)){  file.create(Makevars) }; cat('\nCXX14FLAGS=-O3 -fPIC -Wno-unused-variable -Wno-unused-function', 'CXX14 = g++ -std=c++1y -fPIC', file = Makevars, sep = '\n', append = TRUE)"
 
 RUN pip install jupyter-server-proxy jupyter-rsession-proxy nbgitpuller && \
     jupyter serverextension enable --py nbgitpuller --sys-prefix 
