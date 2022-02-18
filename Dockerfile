@@ -37,7 +37,11 @@ RUN apt update -qq && \
         build-essential \
         cmake \
         libnlopt-dev \
-        libboost-all-dev && \
+        libboost-all-dev \
+    wget && \
+    wget https://download1.rstudio.org/desktop/bionic/amd64/rstudio-2022.02.0-443-amd64.deb && \
+    wget https://download2.rstudio.org/server/bionic/amd64/rstudio-server-2022.02.0-443-amd64.deb && \
+    apt install ./rstudio*.deb -yq && apt-get clean && rm -f ./rstudio*.deb && \
     apt-get clean 
 
 RUN R -e "dotR <- file.path(Sys.getenv('HOME'), '.R'); if(!file.exists(dotR)){ dir.create(dotR) }; Makevars <- file.path(dotR, 'Makevars'); if (!file.exists(Makevars)){  file.create(Makevars) }; cat('\nCXX14FLAGS=-O3 -fPIC -Wno-unused-variable -Wno-unused-function', 'CXX14 = g++ -std=c++1y -fPIC', file = Makevars, sep = '\n', append = TRUE)"
