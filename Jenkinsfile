@@ -1,10 +1,10 @@
 pipeline {
     agent none
     triggers{
-        upstream(upstreamProjects: 'UCSB-PSTAT GitHub/base-rstudio/main', threshold: hudson.model.Result.SUCCESS)
+        upstream(upstreamProjects: 'UCSB-PSTAT GitHub/base-rstudio/int-test', threshold: hudson.model.Result.SUCCESS)
     }
     environment {
-        IMAGE_NAME = 'phy120l'
+        IMAGE_NAME = 'psy120l'
     }
     stages {
         stage('Build Test Deploy') {
@@ -14,7 +14,7 @@ pipeline {
             stages{
                 stage('Build') {
                     steps {
-                        sh 'podman build -t $IMAGE_NAME --pull  --no-cache .'
+                        sh 'podman build -t $IMAGE_NAME --pull  --no-cache --from="ucsb/rstudio-base:weekly .'
                      }
                 }
                 stage('Test') {
@@ -33,13 +33,12 @@ pipeline {
                     }
                 }
                 stage('Deploy') {
-                    when { branch 'main' }
+                    when { branch 'int-test' }
                     environment {
                         DOCKER_HUB_CREDS = credentials('DockerHubToken')
                     }
                     steps {
-                        sh 'skopeo copy containers-storage:localhost/$IMAGE_NAME docker://docker.io/ucsb/$IMAGE_NAME:latest --dest-username $DOCKER_HUB_CREDS_USR --dest-password $DOCKER_HUB_CREDS_PSW'
-                        sh 'skopeo copy containers-storage:localhost/$IMAGE_NAME docker://docker.io/ucsb/$IMAGE_NAME:v$(date "+%Y%m%d") --dest-username $DOCKER_HUB_CREDS_USR --dest-password $DOCKER_HUB_CREDS_PSW'
+                        sh 'skopeo copy containers-storage:localhost/$IMAGE_NAME docker://docker.io/ucsb/$IMAGE_NAME:weekly --dest-username $DOCKER_HUB_CREDS_USR --dest-password $DOCKER_HUB_CREDS_PSW'
                     }
                 }                
             }
