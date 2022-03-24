@@ -14,7 +14,7 @@ pipeline {
             stages{
                 stage('Build') {
                     steps {
-                        sh 'podman build -t $IMAGE_NAME --pull  --no-cache --from="ucsb/rstudio-base:weekly .'
+                        sh 'podman build -t $IMAGE_NAME --pull  --no-cache --from="ucsb/rstudio-base:weekly" .'
                      }
                 }
                 stage('Test') {
