@@ -1,7 +1,8 @@
 pipeline {
     agent none
+    upstream(upstreamProjects: 'UCSB-PSTAT GitHub/base-rstudio/main', threshold: hudson.model.Result.SUCCESS)
     environment {
-        IMAGE_NAME = 'psy120l'
+        IMAGE_NAME = 'phy120l'
     }
     stages {
         stage('Build Test Deploy') {
@@ -11,22 +12,31 @@ pipeline {
             stages{
                 stage('Build') {
                     steps {
-                        sh 'podman build -t $IMAGE_NAME --pull  --no-cache .'
+                        sh 'podman build -t $IMAGE_NAME --pull  --no-cache --from="jupyter/r-notebook:latest" .'
                      }
                 }
                 stage('Test') {
                     steps {
-                        sh 'podman run -it --rm localhost/$IMAGE_NAME R -e "library(\"psych\");library(\"afex\");library(\"tidyverse\");library(\"Rmisc\")"'
-                    }                
+                        sh 'podman run -it --rm localhost/$IMAGE_NAME which rstudio'
+                        sh 'podman run -it --rm localhost/$IMAGE_NAME R -e "library(\"pysch\");library(\"afex\")"'
+                        sh 'podman run -d --name=$IMAGE_NAME --rm -p 8888:8888 localhost/$IMAGE_NAME start-notebook.sh --NotebookApp.token="jenkinstest"'
+                        sh 'sleep 10 && curl -v http://localhost:8888/rstudio?token=jenkinstest 2>&1 | grep -P "HTTP\\S+\\s[1-3][0-9][0-9]\\s+[\\w\\s]+\\s*$"'
+                        sh 'curl -v http://localhost:8888/lab?token=jenkinstest 2>&1 | grep -P "HTTP\\S+\\s200\\s+[\\w\\s]+\\s*$"'
+                        sh 'curl -v http://localhost:8888/tree?token=jenkinstest 2>&1 | grep -P "HTTP\\S+\\s200\\s+[\\w\\s]+\\s*$"'
+                    }
+                    post {
+                        always {
+                            sh 'podman rm -ifv $IMAGE_NAME'
+                        }
+                    }
                 }
                 stage('Deploy') {
-                    when { branch 'main' }
+                    when { branch 'int-test' }
                     environment {
                         DOCKER_HUB_CREDS = credentials('DockerHubToken')
                     }
                     steps {
-                        sh 'skopeo copy containers-storage:localhost/$IMAGE_NAME docker://docker.io/ucsb/$IMAGE_NAME:latest --dest-username $DOCKER_HUB_CREDS_USR --dest-password $DOCKER_HUB_CREDS_PSW'
-                        sh 'skopeo copy containers-storage:localhost/$IMAGE_NAME docker://docker.io/ucsb/$IMAGE_NAME:v$(date "+%Y%m%d") --dest-username $DOCKER_HUB_CREDS_USR --dest-password $DOCKER_HUB_CREDS_PSW'
+                        sh 'skopeo copy containers-storage:localhost/$IMAGE_NAME docker://docker.io/ucsb/$IMAGE_NAME:weekly --dest-username $DOCKER_HUB_CREDS_USR --dest-password $DOCKER_HUB_CREDS_PSW'
                     }
                 }                
             }
