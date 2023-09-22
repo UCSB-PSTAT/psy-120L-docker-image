@@ -14,7 +14,8 @@ pipeline {
             stages{
                 stage('Build') {
                     steps {
-                        sh 'podman build -t $IMAGE_NAME --pull  --no-cache .'
+                        echo "NODE_NAME = ${env.NODE_NAME}"
+                        sh 'podman build -t $IMAGE_NAME --pull --force-rm --no-cache .'
                      }
                 }
                 stage('Test') {
