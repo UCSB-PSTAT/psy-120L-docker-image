@@ -14,6 +14,11 @@ pipeline {
             stages{
                 stage('Build') {
                     steps {
+                        script {
+                            if (currentBuild.getBuildCauses('com.cloudbees.jenkins.GitHubPushCause').size() || currentBuild.getBuildCauses('jenkins.branch.BranchIndexingCause').size()) {
+                               scmSkip(deleteBuild: true, skipPattern:'.*\\[ci skip\\].*')
+                            }
+                        }
                         echo "NODE_NAME = ${env.NODE_NAME}"
                         sh 'podman build -t $IMAGE_NAME --pull --force-rm --no-cache .'
                      }
