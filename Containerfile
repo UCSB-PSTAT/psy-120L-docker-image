@@ -10,7 +10,7 @@ RUN apt update -qq && \
     libfreetype-dev && \
     apt-get clean
 
-RUN ln -s /usr/include/freetype2/ft2build.h /usr/include/ft2build.h  
+RUN ln -s /usr/include/freetype2/*.h /usr/include/
 
 RUN R -e "install.packages(c('psych', 'afex', 'Hmisc', 'emmeans', 'ggplot2', 'lsr', 'svglite'), repos = 'https://cloud.r-project.org/', Ncpus = parallel::detectCores())"
 
