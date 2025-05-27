@@ -7,7 +7,7 @@ USER root
 RUN apt update -qq && \
     apt install -y \
     libfreetype6 \
-    libfreetype-dev \
+    libfreetype-dev && \
     apt-get clean
 
 RUN ln -s /usr/include/freetype2/ft2build.h /usr/include/ft2build.h  
