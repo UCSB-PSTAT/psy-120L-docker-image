@@ -36,7 +36,17 @@ pipeline {
                         container('podman') {
                             sh 'podman run -it --rm localhost/$IMAGE_NAME which rstudio'
                             sh 'podman run -it --rm localhost/$IMAGE_NAME R -q -e "getRversion() >= \\"4.5.2\\"" | tee /dev/stderr | grep -q "TRUE"'
-                            sh 'podman run -it --rm localhost/$IMAGE_NAME R -e "library(\"psych\");library(\"afex\");library(\"Hmisc\");library(\"emmeans\");library(\"tidyverse\");library(\"ggplot2\");library(\"lsr\");library(\"knitr\");library(\"svglite\");library(\"systemfonts\")"'
+                            sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"afex\")"'
+                            sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"emmeans\")"'
+                            sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"ggplot2\")"'
+                            sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"Hmisc\")"'
+                            sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"knitr\")"'
+                            sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"lsr\")"'
+                            sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"psych\")"'
+                            sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"rmarkdown\")"'
+                            sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"systemfonts\")"'
+                            sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"svglite\")"'
+                            sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"tidyverse\")"'
                             sh 'podman run -d --name=$IMAGE_NAME --rm -p 8888:8888 localhost/$IMAGE_NAME start-notebook.sh --NotebookApp.token="jenkinstest"'
                             sh 'sleep 10 && curl -v http://localhost:8888/rstudio?token=jenkinstest 2>&1 | grep -P "HTTP\\S+\\s[1-3][0-9][0-9]\\s+[\\w\\s]+\\s*$"'
                             sh 'curl -v http://localhost:8888/lab?token=jenkinstest 2>&1 | grep -P "HTTP\\S+\\s200\\s+[\\w\\s]+\\s*$"'
@@ -79,10 +89,10 @@ pipeline {
     }
     post {
         success {
-            slackSend(channel: '#infrastructure-build', username: 'jenkins', color: 'good', message: "Build ${env.JOB_NAME} ${env.BUILD_NUMBER} just finished successfull! (<${env.BUILD_URL}|Details>)")
+            slackSend(username: 'jenkins', color: 'good', message: "Build ${env.JOB_NAME} ${env.BUILD_NUMBER} just finished successfull! (<${env.BUILD_URL}|Details>)")
         }
         failure {
-            slackSend(channel: '#infrastructure-build', username: 'jenkins', color: 'danger', message: "Uh Oh! Build ${env.JOB_NAME} ${env.BUILD_NUMBER} had a failure! (<${env.BUILD_URL}|Find out why>).")
+            slackSend(username: 'jenkins', color: 'danger', message: "Uh Oh! Build ${env.JOB_NAME} ${env.BUILD_NUMBER} had a failure! (<${env.BUILD_URL}|Find out why>).")
         }
     }
 }
