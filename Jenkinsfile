@@ -40,7 +40,7 @@ pipeline {
                             sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"emmeans\")"'
                             sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"ggplot2\")"'
                             sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"Hmisc\")"'
-                            sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"kitr\")"'
+                            sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"knitr\")"'
                             sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"lsr\")"'
                             sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"psych\")"'
                             sh 'podman run -it --rm localhost/$IMAGE_NAME Rscript -e "library(\"rmarkdown\")"'
@@ -89,10 +89,10 @@ pipeline {
     }
     post {
         success {
-            slackSend(channel: '#infrastructure-build', username: 'jenkins', color: 'good', message: "Build ${env.JOB_NAME} ${env.BUILD_NUMBER} just finished successfull! (<${env.BUILD_URL}|Details>)")
+            slackSend(username: 'jenkins', color: 'good', message: "Build ${env.JOB_NAME} ${env.BUILD_NUMBER} just finished successfull! (<${env.BUILD_URL}|Details>)")
         }
         failure {
-            slackSend(channel: '#infrastructure-build', username: 'jenkins', color: 'danger', message: "Uh Oh! Build ${env.JOB_NAME} ${env.BUILD_NUMBER} had a failure! (<${env.BUILD_URL}|Find out why>).")
+            slackSend(username: 'jenkins', color: 'danger', message: "Uh Oh! Build ${env.JOB_NAME} ${env.BUILD_NUMBER} had a failure! (<${env.BUILD_URL}|Find out why>).")
         }
     }
 }
